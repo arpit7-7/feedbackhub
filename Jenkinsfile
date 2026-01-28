@@ -6,12 +6,12 @@ pipeline {
         AWS_REGION   = "ap-south-1"
 
         // ===== AWS / DEPLOY CONFIG =====
-        ECR_REGISTRY = "650532568136.dkr.ecr.ap-south-1.amazonaws.com"
-        ECR_REPO     = "650532568136.dkr.ecr.ap-south-1.amazonaws.com/feedbackhub"
+        ECR_REGISTRY = "590184093491.dkr.ecr.ap-south-1.amazonaws.com"
+        ECR_REPO     = "590184093491.dkr.ecr.ap-south-1.amazonaws.com/feedbackhub"
 
         EC2_USER = "ec2-user"
-        EC2_HOST = "15.206.92.133"
-        SSH_KEY  = "/var/lib/jenkins/.ssh/feedback.pem"
+        EC2_HOST = "13.235.254.3"
+        SSH_KEY  = "/var/lib/jenkins/.ssh/feed.pem"
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
         stage("Checkout Source") {
             steps {
                 git branch: "main",
-                    url: "https://github.com/advait-766/feedbackhub.git"
+                    url: "https://github.com/arpit7-7/feedbackhub.git"
             }
         }
 
