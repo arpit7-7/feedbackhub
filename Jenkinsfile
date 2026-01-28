@@ -80,7 +80,6 @@ pipeline {
             }
         }
 
-    stages {
         stage('ECR Login') {
             steps {
                 withCredentials([usernamePassword(
@@ -95,7 +94,6 @@ pipeline {
             }
         }
     }
-}
 
 
 
