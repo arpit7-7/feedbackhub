@@ -13,8 +13,7 @@ pipeline {
         EC2_HOST = "13.235.254.3"
         SSH_KEY  = "/var/lib/jenkins/.ssh/feed.pem"
 
-        # Path to Semgrep venv (if using venv)
-        SEMGREP_VENV = "/var/lib/jenkins/venvs/sec-tools"
+        SEMGREP_VENV = "/var/lib/jenkins/venvs/sec-tools" // Path to Semgrep venv
     }
 
     stages {
@@ -39,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                     echo "[SEMGREP] Running static analysis..."
-                    # Activate venv if needed
+                    # Activate venv if it exists
                     if [ -d "$SEMGREP_VENV" ]; then
                         . $SEMGREP_VENV/bin/activate
                     fi
