@@ -38,12 +38,9 @@ pipeline {
             steps {
                 sh '''
                     echo "[SEMGREP] Running static analysis..."
-                    # Activate venv if it exists
                     if [ -d "$SEMGREP_VENV" ]; then
                         . $SEMGREP_VENV/bin/activate
                     fi
-
-                    # Run Semgrep
                     semgrep --config auto --json > semgrep.json || true
                 '''
             }
@@ -73,7 +70,6 @@ pipeline {
                     echo "[AI] Extracting features..."
                     FEATURES=$(/var/lib/jenkins/venvs/ai-env/bin/python ai-risk-engine/extract_features.py)
                     echo "[AI] Features: $FEATURES"
-
                     echo "[AI] Evaluating risk..."
                     /var/lib/jenkins/venvs/ai-env/bin/python ai-risk-engine/model_predict.py $FEATURES
                 '''
@@ -88,14 +84,12 @@ pipeline {
                     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                 )]) {
                     sh '''
-                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 590184093491.dkr.ecr.ap-south-1.amazonaws.com
+                        echo "[AWS] Logging into ECR..."
+                        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
                     '''
                 }
             }
         }
-    }
-
-
 
         stage("Push Image to ECR") {
             steps {
@@ -113,9 +107,9 @@ pipeline {
                     echo "[DEPLOY] Deploying to EC2..."
                     ssh -4 -o StrictHostKeyChecking=no -i $SSH_KEY $EC2_USER@$EC2_HOST "
                         docker pull $ECR_REPO:latest &&
-                        docker stop feedbackhub || true &&
-                        docker rm feedbackhub || true &&
-                        docker run -d --name feedbackhub -p 80:5000 $ECR_REPO:latest
+                        docker stop $APP_NAME || true &&
+                        docker rm $APP_NAME || true &&
+                        docker run -d --name $APP_NAME -p 80:5000 $ECR_REPO:latest
                     "
                 '''
             }
